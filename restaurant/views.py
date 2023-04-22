@@ -9,6 +9,9 @@ from users.models import Favorite
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
+from django.db.models.aggregates import Avg
+from django.db.models.functions import Coalesce
+from django.db.models import FloatField
 # Create your views here.
 
 
@@ -16,7 +19,13 @@ class RestaurantViewSet(viewsets.GenericViewSet, generics.ListAPIView):
 
     authentication_classes = ()
     permission_classes = ()
-    queryset = models.Restaurant.objects.all()
+    queryset = models.Restaurant.objects.annotate(
+        rate=Coalesce(
+            Avg('reviews__rating'),
+            0,
+            output_field=FloatField()
+        )
+    )
     serializer_class = serializers.ResturantSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     ordering_fields = ['name']

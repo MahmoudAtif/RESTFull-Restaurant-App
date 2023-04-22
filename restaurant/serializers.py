@@ -26,26 +26,28 @@ class MenuGroupSerializer(serializers.ModelSerializer):
 
 class ResturantSerializer(serializers.ModelSerializer):
     status = serializers.CharField(source='get_status')
+    rate = serializers.FloatField()
 
     class Meta:
         model = models.Restaurant
-        fields = ['id', 'name', 'description', 'status']
+        fields = ['id', 'name', 'description', 'status', 'rate']
 
 
 class ResturantDeatilSerializer(serializers.ModelSerializer):
     groups = MenuGroupSerializer(read_only=True, many=True)
-    status = serializers.CharField(source='get_status')
+    status = serializers.CharField(source='get_status', read_only=True)
+    rate = serializers.FloatField()
 
     class Meta:
         model = models.Restaurant
-        fields = ['id', 'name', 'description', 'status', 'groups']
+        fields = ['id', 'name', 'description', 'status', 'groups', 'rate']
 
 
 class ReviewInputsSerializer(serializers.Serializer):
     comment = serializers.CharField()
     rating = serializers.FloatField()
 
+
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Review
-        
